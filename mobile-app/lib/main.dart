@@ -2,7 +2,6 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'src/call_sample/call_sample.dart';
-import 'src/call_sample/data_channel_sample.dart';
 import 'src/route_item.dart';
 
 void main() => runApp(new MyApp());
@@ -22,7 +21,6 @@ class _MyAppState extends State<MyApp> {
   String _server = '';
   late SharedPreferences _prefs;
 
-  bool _datachannel = false;
   @override
   initState() {
     super.initState();
@@ -31,37 +29,108 @@ class _MyAppState extends State<MyApp> {
   }
 
   _buildRow(context, item) {
-    return ListBody(children: <Widget>[
-      ListTile(
-        title: Text(item.title),
-        onTap: () => item.push(context),
-        trailing: Icon(Icons.arrow_right),
+    return Container(
+      child: FloatingActionButton.extended(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        label: Row(
+          children: <Widget>[
+            Text('Iniciar',
+                style: TextStyle(color: Color.fromARGB(255, 22, 22, 22))),
+            Icon(Icons.arrow_right, color: Color.fromARGB(255, 22, 22, 22)),
+          ],
+        ),
+        backgroundColor: Colors.deepPurple,
+        onPressed: () => item.push(context),
       ),
-      Divider()
-    ]);
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(
-            title: Text('Flutter-WebRTC example'),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                flex: 2,
+                child: new Container(
+                  color: Color.fromARGB(255, 22, 22, 22),
+                  child: new Column(
+                    children: <Widget>[
+                      new Expanded(
+                        flex: 1,
+                        child: new Container(
+                          alignment: Alignment.bottomCenter,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                width: 100,
+                                child: Icon(Icons.phone_iphone_outlined,
+                                    color: Colors.deepPurple, size: 80.0),
+                              ),
+                              Container(
+                                width: 100,
+                                child: Text('...',
+                                    style: TextStyle(
+                                        fontSize: 80.0,
+                                        color: Colors.deepPurple),
+                                    textAlign: TextAlign.center),
+                              ),
+                              Container(
+                                width: 100,
+                                child: Icon(Icons.desktop_windows_outlined,
+                                    color: Colors.deepPurple, size: 80.0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      new Expanded(
+                        flex: 1,
+                        child: new Container(
+                          padding: EdgeInsets.only(top: 30.0),
+                          alignment: Alignment.topCenter,
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                child: Text('Deseja inicar uma transmissão?',
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        color: Colors.deepPurple),
+                                    textAlign: TextAlign.center),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(top: 30.0),
+                                width: 150,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: items.length,
+                                  itemBuilder: (context, i) {
+                                    return _buildRow(context, items[i]);
+                                  },
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-          body: ListView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(0.0),
-              itemCount: items.length,
-              itemBuilder: (context, i) {
-                return _buildRow(context, items[i]);
-              })),
+        ),
+      ),
     );
   }
 
   _initData() async {
     _prefs = await SharedPreferences.getInstance();
     setState(() {
-      _server = _prefs.getString('server') ?? 'demo.cloudwebrtc.com';
+      _server = _prefs.getString('server') ?? 'ex: 0.0.0.0';
     });
   }
 
@@ -71,16 +140,14 @@ class _MyAppState extends State<MyApp> {
       context: context,
       builder: (BuildContext context) => child,
     ).then<void>((T? value) {
-      // The value passed to Navigator.pop() or null.
       if (value != null) {
         if (value == DialogDemoAction.connect) {
           _prefs.setString('server', _server);
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext context) => _datachannel
-                      ? DataChannelSample(host: _server)
-                      : CallSample(host: _server)));
+                  builder: (BuildContext context) =>
+                      CallSample(host: _server)));
         }
       }
     });
@@ -90,26 +157,36 @@ class _MyAppState extends State<MyApp> {
     showDemoDialog<DialogDemoAction>(
         context: context,
         child: AlertDialog(
-            title: const Text('Enter server address:'),
-            content: TextField(
+            backgroundColor: Color.fromARGB(255, 22, 22, 22),
+            title: const Text('Digite o endereço do servidor:',
+                style: TextStyle(color: Colors.deepPurple)),
+            content: TextFormField(
+              cursorColor: Colors.deepPurple,
+              style: TextStyle(color: Colors.deepPurple),
               onChanged: (String text) {
                 setState(() {
                   _server = text;
                 });
               },
               decoration: InputDecoration(
-                hintText: _server,
-              ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.deepPurple, width: 2.0),
+                  ),
+                  hintText: _server,
+                  hintStyle: TextStyle(color: Colors.deepPurple)),
               textAlign: TextAlign.center,
             ),
             actions: <Widget>[
               FlatButton(
-                  child: const Text('CANCEL'),
+                  child: const Text('CANCEL',
+                      style: TextStyle(color: Colors.deepPurple)),
                   onPressed: () {
                     Navigator.pop(context, DialogDemoAction.cancel);
                   }),
               FlatButton(
-                  child: const Text('CONNECT'),
+                  child: const Text('CONNECT',
+                      style: TextStyle(color: Colors.deepPurple)),
                   onPressed: () {
                     Navigator.pop(context, DialogDemoAction.connect);
                   })
@@ -122,14 +199,6 @@ class _MyAppState extends State<MyApp> {
           title: 'P2P Call Sample',
           subtitle: 'P2P Call Sample.',
           push: (BuildContext context) {
-            _datachannel = false;
-            _showAddressDialog(context);
-          }),
-      RouteItem(
-          title: 'Data Channel Sample',
-          subtitle: 'P2P Data Channel.',
-          push: (BuildContext context) {
-            _datachannel = true;
             _showAddressDialog(context);
           }),
     ];

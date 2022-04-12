@@ -143,11 +143,13 @@ class _CallSampleState extends State<CallSample> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("title"),
-          content: Text("waiting"),
+          content: Text("Aguardando confirmação",
+              style: TextStyle(color: Colors.deepPurple)),
+          backgroundColor: Color.fromARGB(255, 22, 22, 22),
           actions: <Widget>[
             TextButton(
-              child: Text("cancel"),
+              child:
+                  Text("cancelar", style: TextStyle(color: Colors.deepPurple)),
               onPressed: () {
                 Navigator.of(context).pop(false);
                 _hangUp();
@@ -192,12 +194,10 @@ class _CallSampleState extends State<CallSample> {
   }
 
   _buildRow(context, peer) {
-    var self = (peer['id'] == _selfId);
     return ListBody(children: <Widget>[
       ListTile(
-        title: Text(self
-            ? peer['name'] + ', ID: ${peer['id']} ' + ' [Your self]'
-            : peer['name'] + ', ID: ${peer['id']} '),
+        title: Text(peer['name'] + ', ID: ${peer['id']} ',
+            style: TextStyle(color: Colors.deepPurple)),
         onTap: null,
         trailing: SizedBox(
             width: 100.0,
@@ -205,13 +205,11 @@ class _CallSampleState extends State<CallSample> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   IconButton(
-                    icon: Icon(self ? Icons.close : Icons.videocam,
-                        color: self ? Colors.grey : Colors.black),
+                    icon: Icon(Icons.videocam, color: Colors.deepPurple),
                     onPressed: () => _invitePeer(context, peer['id'], false),
                     tooltip: 'Video calling',
                   ),
                 ])),
-        subtitle: Text('[' + peer['user_agent'] + ']'),
       ),
       Divider()
     ]);
@@ -219,18 +217,16 @@ class _CallSampleState extends State<CallSample> {
 
   @override
   Widget build(BuildContext context) {
+    print(_peers);
+    _peers.removeWhere((item) => item['id'] == _selfId);
+    print(_peers);
     return Scaffold(
       appBar: AppBar(
-        title: Text('P2P Call Sample' +
-            (_selfId != null ? ' [Your ID ($_selfId)] ' : '')),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: null,
-            tooltip: 'setup',
-          ),
-        ],
+        title: Text('Dispositivos disponiveis',
+            style: TextStyle(color: Colors.deepPurple)),
+        backgroundColor: Color.fromARGB(255, 22, 22, 22),
       ),
+      backgroundColor: Color.fromARGB(255, 22, 22, 22),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _inCalling
           ? SizedBox(
@@ -240,16 +236,18 @@ class _CallSampleState extends State<CallSample> {
                   children: <Widget>[
                     FloatingActionButton(
                       child: const Icon(Icons.switch_camera),
+                      backgroundColor: Colors.deepPurple,
                       onPressed: _switchCamera,
                     ),
                     FloatingActionButton(
                       onPressed: _hangUp,
                       tooltip: 'Hangup',
                       child: Icon(Icons.call_end),
-                      backgroundColor: Colors.pink,
+                      backgroundColor: Colors.red,
                     ),
                     FloatingActionButton(
                       child: const Icon(Icons.mic_off),
+                      backgroundColor: Colors.deepPurple,
                       onPressed: _muteMic,
                     )
                   ]))

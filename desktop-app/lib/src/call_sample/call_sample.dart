@@ -126,15 +126,20 @@ class _CallSampleState extends State<CallSample> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Parece que encontramos uma conexão de $_peerName"),
-          content: Text("Deseja aceitar?"),
+          backgroundColor: Color.fromARGB(255, 22, 22, 22),
+          title: Text("Parece que encontramos uma conexão de $_peerName",
+              style: TextStyle(color: Colors.deepPurple)),
+          content: Text("Deseja aceitar?",
+              style: TextStyle(color: Colors.deepPurple)),
           actions: <Widget>[
             TextButton(
-              child: Text("Rejeitar"),
+              child:
+                  Text("Rejeitar", style: TextStyle(color: Colors.deepPurple)),
               onPressed: () => Navigator.of(context).pop(false),
             ),
             TextButton(
-              child: Text("Aceitar"),
+              child:
+                  Text("Aceitar", style: TextStyle(color: Colors.deepPurple)),
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
@@ -190,40 +195,9 @@ class _CallSampleState extends State<CallSample> {
     }
   }
 
-  _switchCamera() {
-    _signaling?.switchCamera();
-  }
-
-  _muteMic() {
-    _signaling?.muteMic();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _inCalling
-          ? SizedBox(
-              width: 200.0,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    FloatingActionButton(
-                      child: const Icon(Icons.switch_camera),
-                      onPressed: _switchCamera,
-                    ),
-                    FloatingActionButton(
-                      onPressed: _hangUp,
-                      tooltip: 'Hangup',
-                      child: Icon(Icons.call_end),
-                      backgroundColor: Colors.pink,
-                    ),
-                    FloatingActionButton(
-                      child: const Icon(Icons.mic_off),
-                      onPressed: _muteMic,
-                    )
-                  ]))
-          : null,
       body: _inCalling
           ? OrientationBuilder(builder: (context, orientation) {
               return Container(
@@ -250,7 +224,7 @@ class _CallSampleState extends State<CallSample> {
                     Expanded(
                       flex: 2,
                       child: new Container(
-                        color: Colors.deepPurple,
+                        color: Color.fromARGB(255, 22, 22, 22),
                         child: new Column(
                           children: <Widget>[
                             new Expanded(
@@ -264,18 +238,21 @@ class _CallSampleState extends State<CallSample> {
                                       width: 100,
                                       child: Icon(
                                           Icons.desktop_windows_outlined,
-                                          size: 80.0),
+                                          size: 80.0,
+                                          color: Colors.deepPurple),
                                     ),
                                     Container(
                                       width: 100,
                                       child: Text('...',
-                                          style: TextStyle(fontSize: 80.0),
+                                          style: TextStyle(
+                                              fontSize: 80.0,
+                                              color: Colors.deepPurple),
                                           textAlign: TextAlign.center),
                                     ),
                                     Container(
                                       width: 100,
                                       child: Icon(Icons.phone_iphone_outlined,
-                                          size: 80.0),
+                                          size: 80.0, color: Colors.deepPurple),
                                     ),
                                   ],
                                 ),
@@ -287,7 +264,8 @@ class _CallSampleState extends State<CallSample> {
                                 alignment: Alignment(0, -0.75),
                                 child: Text(
                                   'Aguardando conexão do dispositivo móvel',
-                                  style: TextStyle(fontSize: 25.0),
+                                  style: TextStyle(
+                                      fontSize: 25.0, color: Colors.deepPurple),
                                 ),
                               ),
                             ),
