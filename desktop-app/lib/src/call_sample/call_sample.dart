@@ -162,7 +162,6 @@ class _CallSampleState extends State<CallSample> {
               child: Text("cancel"),
               onPressed: () {
                 Navigator.of(context).pop(false);
-                _hangUp();
               },
             ),
           ],
@@ -186,12 +185,6 @@ class _CallSampleState extends State<CallSample> {
   _reject() {
     if (_session != null) {
       _signaling?.reject(_session!.sid);
-    }
-  }
-
-  _hangUp() {
-    if (_session != null) {
-      _signaling?.bye(_session!.sid);
     }
   }
 
