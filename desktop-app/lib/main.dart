@@ -2,8 +2,25 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'src/call_sample/call_sample.dart';
 import 'src/route_item.dart';
+import 'dart:io';
 
-void main() {
+void main() async {
+  String dir = (Directory.current.path +
+      '\\lib\\src\\win-dshow\\virtualcam-install.bat');
+
+  Process.run('Powershell -Command Start-Process "$dir" -Verb RunAs', [],
+          runInShell: true)
+      .then((ProcessResult result) {
+    print(result.stderr);
+
+    String dir2 = (Directory.current.path + '\\lib\\teste.py');
+
+    Process.run('python', [dir2], runInShell: true)
+        .then((ProcessResult result) {
+      print(result.stderr);
+    });
+  });
+
   runApp(new MyApp(initialRoute: '/CallSample'));
 }
 
