@@ -75,5 +75,4 @@ goto checkAdmin
 	echo.
 
 :end
-	pause
 	exit
