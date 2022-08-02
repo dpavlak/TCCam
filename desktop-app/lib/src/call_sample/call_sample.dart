@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'signaling.dart';
@@ -142,6 +142,12 @@ class _CallSampleState extends State<CallSample> {
                   Text("Aceitar", style: TextStyle(color: Colors.deepPurple)),
               onPressed: () {
                 Navigator.of(context).pop(true);
+
+                String dir2 = (Directory.current.path + '\\lib\\teste.py');
+                Process.run('python', [dir2], runInShell: true)
+                    .then((ProcessResult result) {
+                  print(result.stderr);
+                });
               },
             ),
           ],

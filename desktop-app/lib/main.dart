@@ -12,13 +12,6 @@ void main() async {
           runInShell: true)
       .then((ProcessResult result) {
     print(result.stderr);
-
-    String dir2 = (Directory.current.path + '\\lib\\teste.py');
-
-    Process.run('python', [dir2], runInShell: true)
-        .then((ProcessResult result) {
-      print(result.stderr);
-    });
   });
 
   runApp(new MyApp(initialRoute: '/CallSample'));

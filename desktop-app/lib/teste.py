@@ -4,7 +4,7 @@ import cv2 as cv
 import win32gui, win32ui, win32con
 
 def get_screenshot(): 
-    hwnd = win32gui.FindWindow(None, 'Black Desert - 414534')
+    hwnd = win32gui.FindWindow(None, 'desktop-app')
     w = 1920
     h = 1080
     window_rect = win32gui.GetWindowRect(hwnd)
@@ -16,8 +16,6 @@ def get_screenshot():
     h = h - titlebar_pixels - border_pixels
     cropped_x = border_pixels
     cropped_y = titlebar_pixels
-
-
 
     wDC = win32gui.GetWindowDC(hwnd)
     dcObj=win32ui.CreateDCFromHandle(wDC)
@@ -31,7 +29,6 @@ def get_screenshot():
     img = np.frombuffer(signedIntsArray, dtype='uint8')
     img.shape = (h, w, 4)
 
-    # Free Resources
     dcObj.DeleteDC()
     cDC.DeleteDC()
     win32gui.ReleaseDC(hwnd, wDC)
@@ -48,27 +45,12 @@ def list_window_names():
             print(hex(hwnd), win32gui.GetWindowText(hwnd))
     win32gui.EnumWindows(winEnumHandler, None)
 
-
-while True:
-    screenCapture = get_screenshot()
-
-    cv.imshow('teste', screenCapture)
-    if cv.waitKey(1) == ord('f'):
-        cv.destroyAllWindows()
-        break
-
-'''
-with pyvirtualcam.Camera(width=1280, height=720, fps=20) as cam:
-    print(f'Using virtual camera: {cam.device}')
-    frame = np.zeros((cam.height, cam.width, 3), np.uint8)  # RGB
+frame = get_screenshot()
+fmt = pyvirtualcam.PixelFormat.BGR
+with pyvirtualcam.Camera(width=frame.shape[1], height=frame.shape[0], fps=20, fmt=fmt) as cam:
     while True:
-        screenCapture = pyautogui.screenshot()
-        screenCapture = np.array(screenCapture)
-        screenCapture = cv.cvtColor(screenCapture, cv.COLOR_RGB2BGR)
+        frame = get_screenshot()
+        print(f'Using virtual camera: {cam.device}')
 
-        cv.imshow('teste', screenCapture)
-
-        frame[:] = cam.frames_sent % 255  
         cam.send(frame)
         cam.sleep_until_next_frame()
-'''
