@@ -62,8 +62,8 @@ class Signaling {
 
   Map<String, dynamic> _iceServers = {
     'iceServers': [
-      {'url': 'stun:stun.l.google.com:19302'},
       /*
+      {'url': 'stun:stun.l.google.com:19302'},
        * turn server configuration example.
       {
         'url': 'turn:123.45.67.89:3478',
@@ -305,14 +305,14 @@ class Signaling {
 
   Future<MediaStream> createStream(String media, bool userScreen) async {
     final Map<String, dynamic> mediaConstraints = {
-      'audio': userScreen ? false : true,
+      'audio': false,
       'video': userScreen
           ? true
           : {
               'mandatory': {
                 'minWidth':
-                    '640', // Provide your own width, height and frame rate here
-                'minHeight': '480',
+                    '1920', // Provide your own width, height and frame rate here
+                'minHeight': '1080',
                 'minFrameRate': '30',
               },
               'facingMode': 'user',
@@ -361,71 +361,29 @@ class Signaling {
           });
           break;
       }
-
-      // Unified-Plan: Simuclast
-      /*
-      await pc.addTransceiver(
-        track: _localStream.getAudioTracks()[0],
-        init: RTCRtpTransceiverInit(
-            direction: TransceiverDirection.SendOnly, streams: [_localStream]),
-      );
-
-      await pc.addTransceiver(
-        track: _localStream.getVideoTracks()[0],
-        init: RTCRtpTransceiverInit(
-            direction: TransceiverDirection.SendOnly,
-            streams: [
-              _localStream
-            ],
-            sendEncodings: [
-              RTCRtpEncoding(rid: 'f', active: true),
-              RTCRtpEncoding(
-                rid: 'h',
-                active: true,
-                scaleResolutionDownBy: 2.0,
-                maxBitrate: 150000,
-              ),
-              RTCRtpEncoding(
-                rid: 'q',
-                active: true,
-                scaleResolutionDownBy: 4.0,
-                maxBitrate: 100000,
-              ),
-            ]),
-      );*/
-      /*
-        var sender = pc.getSenders().find(s => s.track.kind == "video");
-        var parameters = sender.getParameters();
-        if(!parameters)
-          parameters = {};
-        parameters.encodings = [
-          { rid: "h", active: true, maxBitrate: 900000 },
-          { rid: "m", active: true, maxBitrate: 300000, scaleResolutionDownBy: 2 },
-          { rid: "l", active: true, maxBitrate: 100000, scaleResolutionDownBy: 4 }
-        ];
-        sender.setParameters(parameters);
-      */
     }
     pc.onIceCandidate = (candidate) async {
       if (candidate == null) {
         print('onIceCandidate: complete!');
         return;
       }
-      // This delay is needed to allow enough time to try an ICE candidate
-      // before skipping to the next one. 1 second is just an heuristic value
-      // and should be thoroughly tested in your own environment.
+
       await Future.delayed(
-          const Duration(seconds: 1),
-          () => _send('candidate', {
-                'to': peerId,
-                'from': _selfId,
-                'candidate': {
-                  'sdpMLineIndex': candidate.sdpMLineIndex,
-                  'sdpMid': candidate.sdpMid,
-                  'candidate': candidate.candidate,
-                },
-                'session_id': sessionId,
-              }));
+        const Duration(seconds: 1),
+        () => _send(
+          'candidate',
+          {
+            'to': peerId,
+            'from': _selfId,
+            'candidate': {
+              'sdpMLineIndex': candidate.sdpMLineIndex,
+              'sdpMid': candidate.sdpMid,
+              'candidate': candidate.candidate,
+            },
+            'session_id': sessionId,
+          },
+        ),
+      );
     };
 
     pc.onIceConnectionState = (state) {};

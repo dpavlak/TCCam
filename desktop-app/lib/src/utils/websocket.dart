@@ -13,7 +13,6 @@ class SimpleWebSocket {
 
   connect() async {
     try {
-      //_socket = await WebSocket.connect(_url);
       _socket = await _connectForSelfSignedCert(_url);
       onOpen?.call();
       _socket.listen((data) {

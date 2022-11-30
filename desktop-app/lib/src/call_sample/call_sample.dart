@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:core';
 import 'signaling.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import '../../globals.dart' as globals;
 
 class CallSample extends StatefulWidget {
   static String tag = 'call_sample';
@@ -21,6 +23,7 @@ class _CallSampleState extends State<CallSample> {
   RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
   bool _inCalling = false;
   Session? _session;
+  Timer? timer;
 
   bool _waitAccept = false;
 
@@ -32,6 +35,7 @@ class _CallSampleState extends State<CallSample> {
     super.initState();
     initRenderers();
     _connect();
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => updateServer());
   }
 
   initRenderers() async {
@@ -41,6 +45,7 @@ class _CallSampleState extends State<CallSample> {
   @override
   deactivate() {
     super.deactivate();
+    timer?.cancel();
     _signaling?.close();
     _remoteRenderer.dispose();
   }
@@ -113,6 +118,13 @@ class _CallSampleState extends State<CallSample> {
 
     _signaling?.onAddRemoteStream = ((_, stream) {
       _remoteRenderer.srcObject = stream;
+      print(
+          "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      print(MediaQuery.of(context).size.width);
+      print(MediaQuery.of(context).size.height);
+      print(_remoteRenderer.textureId);
+      print(
+          "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     });
 
     _signaling?.onRemoveRemoteStream = ((_, stream) {
@@ -120,26 +132,36 @@ class _CallSampleState extends State<CallSample> {
     });
   }
 
+  void updateServer() {
+    if (globals.serverUp) {
+      setState(() {
+        globals.serverUp = true;
+      });
+    }
+  }
+
   Future<bool?> _showAcceptDialog() {
+    List _peerList = _peers.toList();
     String _peerName = _peers[1]['name'].toString();
+    print(_peers);
     return showDialog<bool?>(
       context: context,
       builder: (context) {
         return AlertDialog(
           backgroundColor: Color.fromARGB(255, 22, 22, 22),
           title: Text("Parece que encontramos uma conexão de $_peerName",
-              style: TextStyle(color: Colors.deepPurple)),
+              style: TextStyle(color: Color.fromARGB(227, 176, 217, 236))),
           content: Text("Deseja aceitar?",
-              style: TextStyle(color: Colors.deepPurple)),
+              style: TextStyle(color: Color.fromARGB(227, 176, 217, 236))),
           actions: <Widget>[
             TextButton(
-              child:
-                  Text("Rejeitar", style: TextStyle(color: Colors.deepPurple)),
+              child: Text("Rejeitar",
+                  style: TextStyle(color: Color.fromARGB(227, 176, 217, 236))),
               onPressed: () => Navigator.of(context).pop(false),
             ),
             TextButton(
-              child:
-                  Text("Aceitar", style: TextStyle(color: Colors.deepPurple)),
+              child: Text("Aceitar",
+                  style: TextStyle(color: Color.fromARGB(227, 176, 217, 236))),
               onPressed: () {
                 Navigator.of(context).pop(true);
 
@@ -202,17 +224,11 @@ class _CallSampleState extends State<CallSample> {
               return Container(
                 child: Stack(children: <Widget>[
                   Positioned(
-                      left: 0.0,
-                      right: 0.0,
-                      top: 0.0,
-                      bottom: 0.0,
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: RTCVideoView(_remoteRenderer),
-                        decoration: BoxDecoration(color: Colors.black54),
-                      )),
+                    child: Container(
+                      child: RTCVideoView(_remoteRenderer, mirror: false),
+                      decoration: BoxDecoration(color: Colors.black54),
+                    ),
+                  ),
                 ]),
               );
             })
@@ -221,13 +237,13 @@ class _CallSampleState extends State<CallSample> {
                 child: Column(
                   children: [
                     Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: new Container(
                         color: Color.fromARGB(255, 22, 22, 22),
                         child: new Column(
                           children: <Widget>[
                             new Expanded(
-                              flex: 1,
+                              flex: 2,
                               child: new Container(
                                 alignment: Alignment.bottomCenter,
                                 child: Row(
@@ -238,20 +254,24 @@ class _CallSampleState extends State<CallSample> {
                                       child: Icon(
                                           Icons.desktop_windows_outlined,
                                           size: 80.0,
-                                          color: Colors.deepPurple),
+                                          color: Color.fromARGB(
+                                              227, 176, 217, 236)),
                                     ),
                                     Container(
                                       width: 100,
                                       child: Text('...',
                                           style: TextStyle(
                                               fontSize: 80.0,
-                                              color: Colors.deepPurple),
+                                              color: Color.fromARGB(
+                                                  227, 176, 217, 236)),
                                           textAlign: TextAlign.center),
                                     ),
                                     Container(
                                       width: 100,
                                       child: Icon(Icons.phone_iphone_outlined,
-                                          size: 80.0, color: Colors.deepPurple),
+                                          size: 80.0,
+                                          color: Color.fromARGB(
+                                              227, 176, 217, 236)),
                                     ),
                                   ],
                                 ),
@@ -264,7 +284,52 @@ class _CallSampleState extends State<CallSample> {
                                 child: Text(
                                   'Aguardando conexão do dispositivo móvel',
                                   style: TextStyle(
-                                      fontSize: 25.0, color: Colors.deepPurple),
+                                      fontSize: 25.0,
+                                      color:
+                                          Color.fromARGB(227, 176, 217, 236)),
+                                ),
+                              ),
+                            ),
+                            new Expanded(
+                              flex: 1,
+                              child: Container(
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: TextStyle(
+                                        fontSize: 15.0,
+                                        color:
+                                            Color.fromARGB(227, 176, 217, 236),
+                                        fontWeight: FontWeight.bold),
+                                    children: <InlineSpan>[
+                                      TextSpan(text: 'Status do Servidor: '),
+                                      TextSpan(
+                                        text: globals.serverUp == true
+                                            ? 'Online '
+                                            : 'Offline',
+                                        style: new TextStyle(
+                                            color: globals.serverUp == true
+                                                ? Colors.green
+                                                : Colors.red),
+                                      ),
+                                      WidgetSpan(
+                                        child: Icon(
+                                            globals.serverUp == true
+                                                ? Icons.wifi_tethering_outlined
+                                                : Icons
+                                                    .wifi_tethering_off_sharp,
+                                            size: 20,
+                                            color: globals.serverUp == true
+                                                ? Colors.green
+                                                : Colors.red),
+                                      ),
+                                      TextSpan(
+                                          text: globals.serverUp == true
+                                              ? '\nEndereço: ' +
+                                                  globals.serverAdress
+                                              : ''),
+                                    ],
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
                             ),

@@ -144,12 +144,12 @@ class _CallSampleState extends State<CallSample> {
       builder: (context) {
         return AlertDialog(
           content: Text("Aguardando confirmação",
-              style: TextStyle(color: Colors.deepPurple)),
+              style: TextStyle(color: Color.fromARGB(227, 176, 217, 236))),
           backgroundColor: Color.fromARGB(255, 22, 22, 22),
           actions: <Widget>[
             TextButton(
-              child:
-                  Text("cancelar", style: TextStyle(color: Colors.deepPurple)),
+              child: Text("cancelar",
+                  style: TextStyle(color: Color.fromARGB(227, 176, 217, 236))),
               onPressed: () {
                 Navigator.of(context).pop(false);
                 _hangUp();
@@ -193,26 +193,66 @@ class _CallSampleState extends State<CallSample> {
     _signaling?.muteMic();
   }
 
-  _buildRow(context, peer) {
+  /*  _buildRow(context, peer) {
     return ListBody(children: <Widget>[
       ListTile(
         title: Text(peer['name'] + ', ID: ${peer['id']} ',
-            style: TextStyle(color: Colors.deepPurple)),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20.0, color: Color.fromARGB(227, 176, 217, 236))),
         onTap: null,
         trailing: SizedBox(
-            width: 100.0,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.videocam, color: Colors.deepPurple),
-                    onPressed: () => _invitePeer(context, peer['id'], false),
-                    tooltip: 'Video calling',
-                  ),
-                ])),
-      ),
-      Divider()
+          width: 100.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.videocam, color: Color.fromARGB(227, 176, 217, 236)),
+                onPressed: () => _invitePeer(context, peer['id'], false),
+                tooltip: 'Video calling',
+              ),
+            ],
+          ),
+        ),
+      )
     ]);
+  } */
+
+  _buildRow(context, peer) {
+    return Center(
+      child: new Column(
+        children: [
+          new Container(
+            height: 300,
+            alignment: Alignment.bottomCenter,
+            child: new Text(
+              '''Existe um aparelho aguardando conexão! \n ''' +
+                  '''Nome: ${peer['name']} \n''' +
+                  '''ID: ${peer['id']} ''',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 16.0,
+                  letterSpacing: 2.0,
+                  height: 2,
+                  color: Color.fromARGB(227, 176, 217, 236)),
+            ),
+          ),
+          new Container(
+            height: 200,
+            child: new SizedBox(
+              height: 100.0,
+              width: 100.0,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                icon: Icon(Icons.videocam,
+                    color: Color.fromARGB(227, 176, 217, 236), size: 80.0),
+                onPressed: () => _invitePeer(context, peer['id'], false),
+                tooltip: 'Video call',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -221,63 +261,77 @@ class _CallSampleState extends State<CallSample> {
     _peers.removeWhere((item) => item['id'] == _selfId);
     print(_peers);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dispositivos disponiveis',
-            style: TextStyle(color: Colors.deepPurple)),
-        backgroundColor: Color.fromARGB(255, 22, 22, 22),
-      ),
+      appBar: _inCalling
+          ? null
+          : AppBar(
+              leading: const BackButton(
+                color: Color.fromARGB(227, 176, 217, 236),
+              ),
+              centerTitle: true,
+              title: Text('Dispositivos disponiveis',
+                  style: TextStyle(color: Color.fromARGB(227, 176, 217, 236))),
+              backgroundColor: Color.fromARGB(255, 22, 22, 22),
+            ),
       backgroundColor: Color.fromARGB(255, 22, 22, 22),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _inCalling
           ? SizedBox(
               width: 200.0,
               child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    FloatingActionButton(
-                      child: const Icon(Icons.switch_camera),
-                      backgroundColor: Colors.deepPurple,
-                      onPressed: _switchCamera,
-                    ),
-                    FloatingActionButton(
-                      onPressed: _hangUp,
-                      tooltip: 'Hangup',
-                      child: Icon(Icons.call_end),
-                      backgroundColor: Colors.red,
-                    ),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  FloatingActionButton(
+                    child: const Icon(Icons.switch_camera),
+                    backgroundColor: Color.fromARGB(227, 176, 217, 236),
+                    onPressed: _switchCamera,
+                  ),
+                  FloatingActionButton(
+                    onPressed: _hangUp,
+                    tooltip: 'Hangup',
+                    child: Icon(Icons.call_end),
+                    backgroundColor: Colors.red,
+                  ), /* 
                     FloatingActionButton(
                       child: const Icon(Icons.mic_off),
-                      backgroundColor: Colors.deepPurple,
+                      backgroundColor: Color.fromARGB(227, 176, 217, 236),
                       onPressed: _muteMic,
-                    )
-                  ]))
+                    ) */
+                ],
+              ),
+            )
           : null,
       body: _inCalling
-          ? OrientationBuilder(builder: (context, orientation) {
-              return Container(
-                child: Stack(children: <Widget>[
-                  Positioned(
-                      left: 0.0,
-                      right: 0.0,
-                      top: 0.0,
-                      bottom: 0.0,
-                      child: Container(
-                        margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: RTCVideoView(_localRenderer),
-                        decoration: BoxDecoration(color: Colors.black54),
-                      )),
-                ]),
-              );
-            })
+          ? OrientationBuilder(
+              builder: (context, orientation) {
+                return Container(
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        left: 0.0,
+                        right: 0.0,
+                        top: 0.0,
+                        bottom: 0.0,
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: RTCVideoView(_localRenderer),
+                          decoration: BoxDecoration(color: Colors.black54),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )
           : ListView.builder(
               shrinkWrap: true,
               padding: const EdgeInsets.all(0.0),
               itemCount: (_peers != null ? _peers.length : 0),
               itemBuilder: (context, i) {
                 return _buildRow(context, _peers[i]);
-              }),
+              },
+            ),
     );
   }
 }

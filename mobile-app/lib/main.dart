@@ -6,6 +6,23 @@ import 'src/route_item.dart';
 
 void main() => runApp(new MyApp());
 
+const MaterialColor primaryBlack = MaterialColor(
+  _blackPrimaryValue,
+  <int, Color>{
+    50: Color(0xFF000000),
+    100: Color(0xFF000000),
+    200: Color(0xFF000000),
+    300: Color(0xFF000000),
+    400: Color(0xFF000000),
+    500: Color(_blackPrimaryValue),
+    600: Color(0xFF000000),
+    700: Color(0xFF000000),
+    800: Color(0xFF000000),
+    900: Color(0xFF000000),
+  },
+);
+const int _blackPrimaryValue = 0xFF000000;
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => new _MyAppState();
@@ -35,11 +52,14 @@ class _MyAppState extends State<MyApp> {
         label: Row(
           children: <Widget>[
             Text('Iniciar',
-                style: TextStyle(color: Color.fromARGB(255, 22, 22, 22))),
+                style: TextStyle(
+                    fontSize: 15.0,
+                    letterSpacing: 2.0,
+                    color: Color.fromARGB(255, 22, 22, 22))),
             Icon(Icons.arrow_right, color: Color.fromARGB(255, 22, 22, 22)),
           ],
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color.fromARGB(227, 176, 217, 236),
         onPressed: () => item.push(context),
       ),
     );
@@ -48,7 +68,19 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: primaryBlack,
+      ),
       home: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          elevation: 0,
+          title: Text('TCCam',
+              style: TextStyle(color: Color.fromARGB(227, 176, 217, 236))),
+          backgroundColor: Color.fromARGB(255, 22, 22, 22),
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -61,6 +93,7 @@ class _MyAppState extends State<MyApp> {
                       new Expanded(
                         flex: 1,
                         child: new Container(
+                          padding: EdgeInsets.only(bottom: 40.0),
                           alignment: Alignment.bottomCenter,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -68,20 +101,23 @@ class _MyAppState extends State<MyApp> {
                               Container(
                                 width: 100,
                                 child: Icon(Icons.phone_iphone_outlined,
-                                    color: Colors.deepPurple, size: 80.0),
+                                    color: Color.fromARGB(227, 176, 217, 236),
+                                    size: 100.0),
                               ),
                               Container(
                                 width: 100,
                                 child: Text('...',
                                     style: TextStyle(
                                         fontSize: 80.0,
-                                        color: Colors.deepPurple),
+                                        color:
+                                            Color.fromARGB(227, 176, 217, 236)),
                                     textAlign: TextAlign.center),
                               ),
                               Container(
                                 width: 100,
                                 child: Icon(Icons.desktop_windows_outlined,
-                                    color: Colors.deepPurple, size: 80.0),
+                                    color: Color.fromARGB(227, 176, 217, 236),
+                                    size: 100.0),
                               ),
                             ],
                           ),
@@ -90,20 +126,23 @@ class _MyAppState extends State<MyApp> {
                       new Expanded(
                         flex: 1,
                         child: new Container(
-                          padding: EdgeInsets.only(top: 30.0),
+                          padding: EdgeInsets.only(top: 80.0),
                           alignment: Alignment.topCenter,
                           child: Column(
                             children: <Widget>[
                               Container(
                                 child: Text('Deseja inicar uma transmissão?',
                                     style: TextStyle(
+                                        letterSpacing: 2.0,
                                         fontSize: 20.0,
-                                        color: Colors.deepPurple),
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                            Color.fromARGB(227, 176, 217, 236)),
                                     textAlign: TextAlign.center),
                               ),
                               Container(
                                 padding: EdgeInsets.only(top: 30.0),
-                                width: 150,
+                                width: 200,
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: items.length,
@@ -155,42 +194,45 @@ class _MyAppState extends State<MyApp> {
 
   _showAddressDialog(context) {
     showDemoDialog<DialogDemoAction>(
-        context: context,
-        child: AlertDialog(
-            backgroundColor: Color.fromARGB(255, 22, 22, 22),
-            title: const Text('Digite o endereço do servidor:',
-                style: TextStyle(color: Colors.deepPurple)),
-            content: TextFormField(
-              cursorColor: Colors.deepPurple,
-              style: TextStyle(color: Colors.deepPurple),
-              onChanged: (String text) {
-                setState(() {
-                  _server = text;
-                });
-              },
-              decoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.deepPurple, width: 2.0),
-                  ),
-                  hintText: _server,
-                  hintStyle: TextStyle(color: Colors.deepPurple)),
-              textAlign: TextAlign.center,
-            ),
-            actions: <Widget>[
-              FlatButton(
-                  child: const Text('CANCEL',
-                      style: TextStyle(color: Colors.deepPurple)),
-                  onPressed: () {
-                    Navigator.pop(context, DialogDemoAction.cancel);
-                  }),
-              FlatButton(
-                  child: const Text('CONNECT',
-                      style: TextStyle(color: Colors.deepPurple)),
-                  onPressed: () {
-                    Navigator.pop(context, DialogDemoAction.connect);
-                  })
-            ]));
+      context: context,
+      child: AlertDialog(
+        backgroundColor: Color.fromARGB(255, 176, 217, 236),
+        title: const Text('Digite o endereço do servidor:',
+            style: TextStyle(color: Color.fromARGB(255, 32, 32, 32))),
+        content: TextFormField(
+          cursorColor: Color.fromARGB(227, 176, 217, 236),
+          style: TextStyle(color: Color.fromARGB(255, 32, 32, 32)),
+          onChanged: (String text) {
+            setState(() {
+              _server = text;
+            });
+          },
+          decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                    color: Color.fromARGB(255, 32, 32, 32), width: 2.0),
+              ),
+              hintText: _server,
+              hintStyle: TextStyle(color: Color.fromARGB(255, 32, 32, 32))),
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          TextButton(
+              child: const Text('CANCELAR',
+                  style: TextStyle(color: Color.fromARGB(255, 32, 32, 32))),
+              onPressed: () {
+                Navigator.pop(context, DialogDemoAction.cancel);
+              }),
+          TextButton(
+            child: const Text('CONECTAR',
+                style: TextStyle(color: Color.fromARGB(255, 32, 32, 32))),
+            onPressed: () {
+              Navigator.pop(context, DialogDemoAction.connect);
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   _initItems() {

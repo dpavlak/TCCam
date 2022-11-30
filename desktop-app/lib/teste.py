@@ -1,12 +1,11 @@
 import pyvirtualcam
 import numpy as np
-import cv2 as cv
 import win32gui, win32ui, win32con
 
 def get_screenshot(): 
     hwnd = win32gui.FindWindow(None, 'desktop-app')
-    w = 1920
-    h = 1080
+    """ w = 1920
+    h = 1080 """
     window_rect = win32gui.GetWindowRect(hwnd)
     w = window_rect[2] - window_rect[0]
     h = window_rect[3] - window_rect[1]
@@ -47,6 +46,7 @@ def list_window_names():
 
 frame = get_screenshot()
 fmt = pyvirtualcam.PixelFormat.BGR
+
 with pyvirtualcam.Camera(width=frame.shape[1], height=frame.shape[0], fps=20, fmt=fmt) as cam:
     while True:
         frame = get_screenshot()

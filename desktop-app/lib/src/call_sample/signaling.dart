@@ -9,6 +9,7 @@ import '../utils/device_info.dart'
 import '../utils/websocket.dart'
     if (dart.library.js) '../utils/websocket_web.dart';
 import '../utils/turn.dart' if (dart.library.js) '../utils/turn_web.dart';
+import '../../globals.dart' as globals;
 
 enum SignalingState {
   ConnectionOpen,
@@ -62,8 +63,8 @@ class Signaling {
 
   Map<String, dynamic> _iceServers = {
     'iceServers': [
-      {'url': 'stun:stun.l.google.com:19302'},
       /*
+      {'url': 'stun:stun.l.google.com:19302'},
        * turn server configuration example.
       {
         'url': 'turn:123.45.67.89:3478',
@@ -261,13 +262,6 @@ class Signaling {
     if (_turnCredential == null) {
       try {
         _turnCredential = await getTurnCredential(_host, _port);
-        /*{
-            "username": "1584195784:mbzrxpgjys",
-            "password": "isyl6FF6nqMTB9/ig5MrMRUXqZg",
-            "ttl": 86400,
-            "uris": ["turn:127.0.0.1:19302?transport=udp"]
-          }
-        */
         _iceServers = {
           'iceServers': [
             {
@@ -297,6 +291,7 @@ class Signaling {
 
     _socket?.onClose = (int? code, String? reason) {
       print('Closed by server [$code => $reason]!');
+      globals.serverUp = false;
       onSignalingStateChange?.call(SignalingState.ConnectionClosed);
     };
 
@@ -311,8 +306,8 @@ class Signaling {
           : {
               'mandatory': {
                 'minWidth':
-                    '640', // Provide your own width, height and frame rate here
-                'minHeight': '480',
+                    '1920', // Provide your own width, height and frame rate here
+                'minHeight': '1080',
                 'minFrameRate': '30',
               },
               'facingMode': 'user',
@@ -361,50 +356,6 @@ class Signaling {
           });
           break;
       }
-
-      // Unified-Plan: Simuclast
-      /*
-      await pc.addTransceiver(
-        track: _localStream.getAudioTracks()[0],
-        init: RTCRtpTransceiverInit(
-            direction: TransceiverDirection.SendOnly, streams: [_localStream]),
-      );
-
-      await pc.addTransceiver(
-        track: _localStream.getVideoTracks()[0],
-        init: RTCRtpTransceiverInit(
-            direction: TransceiverDirection.SendOnly,
-            streams: [
-              _localStream
-            ],
-            sendEncodings: [
-              RTCRtpEncoding(rid: 'f', active: true),
-              RTCRtpEncoding(
-                rid: 'h',
-                active: true,
-                scaleResolutionDownBy: 2.0,
-                maxBitrate: 150000,
-              ),
-              RTCRtpEncoding(
-                rid: 'q',
-                active: true,
-                scaleResolutionDownBy: 4.0,
-                maxBitrate: 100000,
-              ),
-            ]),
-      );*/
-      /*
-        var sender = pc.getSenders().find(s => s.track.kind == "video");
-        var parameters = sender.getParameters();
-        if(!parameters)
-          parameters = {};
-        parameters.encodings = [
-          { rid: "h", active: true, maxBitrate: 900000 },
-          { rid: "m", active: true, maxBitrate: 300000, scaleResolutionDownBy: 2 },
-          { rid: "l", active: true, maxBitrate: 100000, scaleResolutionDownBy: 4 }
-        ];
-        sender.setParameters(parameters);
-      */
     }
     pc.onIceCandidate = (candidate) async {
       if (candidate == null) {
